@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Amatic+SC">
+    <style>
+        /* Styles remain unchanged */
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url(burger1.webp);
+            background-position: center;
+            background-size: cover;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: rgba(255, 255, 0, 0.336);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: solid;
+        }
+
+        h1 {
+            text-align: center;
+            color: black;
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .total-price {
+            text-align: right;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        #proceed {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: #00ff08;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #proceed:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order Summary</h1>
+        <div id="orderList"></div>
+        <div id="totalPrice"></div>
+        <button id="proceed">Proceed</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            displayOrders();
+        });
+    
+        function displayOrders() {
+            var orders = JSON.parse(localStorage.getItem("orders"));
+            var orderListContainer = document.getElementById("orderList");
+            var totalPriceContainer = document.getElementById("totalPrice");
+            var total = 0;
+    
+            if (orders && orders.length > 0) {
+                orders.forEach(function(order) {
+                    var orderItem = document.createElement("div");
+                    orderItem.classList.add("order-item");
+    
+                    var itemName = order.pizzaName || order.pastaName || order.starterName;
+                    var itemPrice = parseFloat(order.price) * parseInt(order.quantity);
+                    orderItem.innerHTML = "<h3>" + order.quantity + " x " + itemName + " - " + itemPrice.toFixed(2) + "₱</h3>";
+                    orderListContainer.appendChild(orderItem);
+    
+                    total += itemPrice;
+                });
+    
+                totalPriceContainer.innerHTML = "<p class='total-price'>Total Price: " + total.toFixed(2) + "₱</p>";
+            } else {
+                orderListContainer.innerHTML = "<p>No orders added yet.</p>";
+                totalPriceContainer.innerHTML = "";
+            }
+        }
+    
+        function confirmOrder() {
+            var orders = JSON.parse(localStorage.getItem("orders")) || [];
+            // Check if there are any orders
+            if (orders.length > 0) {
+                // Store orders in localStorage
+                localStorage.setItem("orders", JSON.stringify(orders));
+                // Redirect to proceed.html
+                window.open("proceed.html", "_blank"); // Open in new tab
+            } else {
+                alert("Please add some orders before confirming.");
+            }
+        }
+    
+        // Attach event listener to the proceed button
+        document.getElementById("proceed").addEventListener("click", confirmOrder);
+    </script>
+    
+</body>
+</html>
